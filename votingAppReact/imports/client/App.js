@@ -1,40 +1,57 @@
 import React, { Component } from 'react';
-import {createContainer } from 'meteor/react-meteor-data';
+import { createContainer } from 'meteor/react-meteor-data';
+import { LoginButtons } from 'meteor/okgrow:accounts-ui-react';
+
+
+import Item from './Item';
+
 import Items from '../api/Items';
 
-// default allows you to not use {} in an import statement in other files
 class App extends Component {
-    constructor() {
-        super();
-        this.state = {
-            name: 'Pav',
-            count: 0
+  addItems(event) {
+    event.preventDefault();
+    const itemOne = this.refs.itemOne.value.trim();
+    const itemTwo = this.refs.itemTwo.value.trim();
+    if (itemOne !== '' && itemTwo !== '') {
+      Items.insert({
+        itemOne: {
+          text: itemOne,
+          value: 0,
+        },
+        itemTwo: {
+          text: itemTwo,
+          value: 0,
         }
+      });
+      this.refs.itemOne.value = '';
+      this.refs.itemTwo.value = '';
     }
-
-    headingClick() {
-        this.setState({count: this.state.count + 1});
-    }
-
-    render() {
-        return (
-            <header onClick={this.headingClick.bind(this)}>
-                <Heading count={this.state.count}/>
-            </header>
-        )
-    }
+  }
+  render() {
+    return (
+      <div>
+        <header>
+          <h1>Voting</h1>
+          <LoginButtons />
+        </header>
+        <main>
+          <form className='new-items' onSubmit={this.addItems.bind(this)}>
+            <input type='text' ref='itemOne' />
+            <input type='text' ref='itemTwo'/>
+            <button type='submit'>Add Items</button>
+          </form>
+          {this.props.items.map((item) => {
+            return <Item item={item} key={item._id}/>
+          })}
+        </main>
+      </div>
+    );
+  }
 }
+
 
 export default createContainer(() => {
-    return {
-        items: Items.find({}).fetch()
-    }
-}, App)
-
-class Heading extends Component {
-    render() {
-        return (
-            <h1>{this.props.count}</h1>
-        )
-    }
-}
+  return {
+    items: Items.find({}).fetch()
+  }
+}, App);
