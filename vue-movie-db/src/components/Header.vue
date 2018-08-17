@@ -1,6 +1,8 @@
 <template>
     <header>
-        <h1>{{ title }}</h1>
+        <h1><router-link to="/">
+        <img src="../assets/logo.svg" />
+        </router-link></h1>
     </header>
 </template>
 
@@ -10,6 +12,12 @@ export default {
     name: 'Header',
     props: {
         title: String
+    },
+    data() {
+        return {
+            show: false,
+            name: "Vue Movie DB"
+        }
     }
 };
 
